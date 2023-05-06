@@ -1,7 +1,7 @@
 # todo-app
 simple web app for managing daily tasks
 
-# To use:
+# to use:
 
 1) npm install
 

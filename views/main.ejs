@@ -5,13 +5,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Tasks</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css" integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N" crossorigin="anonymous">
+    <!-- Favicon -->
     <link rel="icon" href="images/favicon.png" type="image/x-icon" />
+    <!-- Boostrap CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css" integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N" crossorigin="anonymous">
+    <!-- jQuery JS -->
+    <script src="https://code.jquery.com/jquery-3.6.1.min.js" integrity="sha256-o88AwQnZB+VDvE9tvIXrMQaPlFFSUTR+nldQm1LuPXQ=" crossorigin="anonymous"></script>
+    <!-- jQuery UI JS -->
+    <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
 </head>
 <style>
-/* * {
-    font-family: 'Roboto Mono', sans-serif;
-} */
 body {
     background: rgb(238,174,202);
     background: -moz-radial-gradient(circle, rgba(238,174,202,1) 0%, rgba(148,187,233,1) 100%);
@@ -36,10 +39,8 @@ h1 {
 ul {
     list-style-type: none;
     padding-left: 0;
-    /* max-height: 55vh; */
     height: 50vh;
     overflow: scroll;
-    /* margin-bottom: 0; */
 }
 ul li {
     position: relative;
@@ -47,9 +48,6 @@ ul li {
     overflow-wrap: break-word;
     cursor: pointer;
 }
-/* ul li::before {
-    content: '◯  ';
-} */
 input {
    width: 100%;
    background-color: #f9f9f9;
@@ -75,17 +73,6 @@ input:focus {
 .ic-delete:hover {
     color: #dc3545;
 }
-#undoAlert {
-    display: none;
-    width: 300px;
-    margin: 0 auto;
-    padding:0.5rem;
-    background-color: #cce5ff;
-    position: absolute;
-    left: 50%;
-    transform: translateX(-50%);
-    bottom: 2rem;
-}
 </style>
 <body>
     <div class="container">
@@ -96,16 +83,10 @@ input:focus {
                     <p>No tasks added</p>
                 </div>
             </ul>
-            <!-- html for completed items send to bottom of list -->
-            <!-- <ul id="completedTodoList"></ul> -->
             <input type="text" name="todo" id="todo" placeholder="Add task here">
         </div>
-        <!-- <div id="undoAlert" class="text-center"><p class="m-0" style="color: #004085;">Task removed, click here to undo</p></div> -->
     </div>
 </body>
-<script src="https://code.jquery.com/jquery-3.6.1.min.js" integrity="sha256-o88AwQnZB+VDvE9tvIXrMQaPlFFSUTR+nldQm1LuPXQ=" crossorigin="anonymous"></script>
-<script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-Fy6S3B9q64WdZWQUiU+q4/2Lc9npb8tCaSX9FK7E8HnRr0Jz8D6OP9dO5Vg3Q9ct" crossorigin="anonymous"></script>
 <script>
     // add drag and drop for task items
     $(function() {$( "#todoList" ).sortable()})
@@ -115,14 +96,8 @@ input:focus {
     $('#todo').select()
 </script>
 <script>
-
     // start id numbering for todo items
     let todoId = 0
-
-    // on change of todo input
-    $('#todo').on('input', function(e){
-        // console.log(e)
-    })
 
     // enter keypress
     $('#todo').keypress(function (e) {
@@ -139,25 +114,18 @@ input:focus {
             $("#todoList").append(`<li class="todo-item border-bottom" data-id="${todoId}">${val}<span class="ic-delete" style="float: right;">✕</span></li>`)
             $(this).val('')
 
-            // update empty state
+            // remove empty state
             updateEmptyState()
 
             // add complete click event to task item
             $(`li[data-id='${todoId}']`).on('click', function(e){
                 $(this).toggleClass('item-complete')
-                // send complete to bottom and incomplete to top
-                // if($(this).hasClass('item-complete')){
-                //     $(this).appendTo('#todoList')
-                // } else {
-                //     $(this).prependTo('#todoList')
-                // }
-                
             })
 
             // add delete click event to task item
             $(`li[data-id='${todoId}'] .ic-delete`).on('click', function(e){
                 $(this).parent().remove()
-                // update empty state
+                // check for empty state
                 updateEmptyState()
             })
 
@@ -165,7 +133,7 @@ input:focus {
             todoId++
         }
     });
-
+    
     function updateEmptyState() {
         if($('ul li').length > 0){
             // clear empty state
@@ -175,24 +143,5 @@ input:focus {
             $('#emptyTasks').show()
         }
     }
-
-    function showUndoAlert(item) {
-        $('#undoAlert').fadeIn()
-
-        $('#undoAlert').on('click', function(e){
-            console.log(item)
-            $("#todoList").append(`<li class="todo-item border-bottom">${item}</li>`)
-            // $('.ic-delete').on('click', function(e){
-            //     $(this).parent().remove()
-            // })
-        })
-
-        setTimeout(function() {
-            $('#undoAlert').fadeOut()
-        }, 4000);
-
-    }
-
-
 </script>
 </html>
