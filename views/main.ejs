@@ -23,7 +23,7 @@ body {
     filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#eeaeca",endColorstr="#94bbe9",GradientType=1);
 }
 .todo-container {
-    width: 500px;
+    width: 520px;
     margin: 8vh auto 0  auto;
     background-color: #f9f9f9;
     padding: 2.25rem;
@@ -96,13 +96,82 @@ input:focus {
     $('#todo').select()
 </script>
 <script>
-    // start id numbering for todo items
+    // check if empty state is necessary
+    function updateEmptyState(){
+        if($('ul li').length > 0){
+            // clear empty state
+            $('#emptyTasks').hide()
+        } else {
+            // show empty state
+            $('#emptyTasks').show()
+        }
+    }
+    // add complete and delete events
+    function addTaskEvents(id){
+        // add complete click event to task item
+        $(`li[data-id='${id}']`).on('click', function(e){
+            $(this).toggleClass('item-complete')
+        })
+        // add delete click event to task item
+        $(`li[data-id='${id}'] .ic-delete`).on('click', function(e){
+            // delete task from dom
+            $(this).parent().remove()
+            // delete task from cookies
+            document.cookie = `${id}=;expires=Thu, 01 Jan 1970 00:00:01 GMT;`
+            // check for empty state
+            updateEmptyState()
+        })
+    }
+
+</script>
+<script>
+
     let todoId = 0
+
+    // on refresh, load any existing tasks
+    if(document.cookie){
+
+        // break cookies into array of cookie strings
+        // each cookie string is in the {name}={value} format
+        let cookies = document.cookie.split('; ')
+    
+        for(let i = 0; i < cookies.length; i++){
+
+            // separate cookie name and value into different variables
+            let id = cookies[i].split('=')[0]
+            let value = cookies[i].substring(cookies[i].indexOf("=") + 1)
+        
+            // add task to list
+            $("#todoList").append(`<li class="todo-item border-bottom" data-id="${id}">${value}<span class="ic-delete" style="float: right;">✕</span></li>`)
+        
+            // remove empty state
+            updateEmptyState()
+
+            // add complete and delete events to task item
+            addTaskEvents(id)
+
+            // adjust todoId to one more than current highest data-id
+            // this prevents tasks from having the same data-id
+            if(Number(id) >= todoId){
+                todoId = Number(id) + 1
+            }
+
+        }
+    }
+
+</script>
+<script>
 
     // enter keypress
     $('#todo').keypress(function (e) {
-        let key = e.which;
+
+        // detect which key is pressed
+        let key = e.which
+
+        // if 'enter' key is pressed, add value to task list
         if(key == 13){
+
+            // get input value
             let val = $(this).val()
             
             // exit if value is empty
@@ -112,36 +181,24 @@ input:focus {
 
             // add task to list
             $("#todoList").append(`<li class="todo-item border-bottom" data-id="${todoId}">${val}<span class="ic-delete" style="float: right;">✕</span></li>`)
+            
+            // save task to cookies
+            document.cookie = `${todoId}=${val}`
+            
+            // clear input
             $(this).val('')
 
             // remove empty state
             updateEmptyState()
 
-            // add complete click event to task item
-            $(`li[data-id='${todoId}']`).on('click', function(e){
-                $(this).toggleClass('item-complete')
-            })
-
-            // add delete click event to task item
-            $(`li[data-id='${todoId}'] .ic-delete`).on('click', function(e){
-                $(this).parent().remove()
-                // check for empty state
-                updateEmptyState()
-            })
+            // add complete and delete events to task item
+            addTaskEvents(todoId)
 
             // update id for next item
             todoId++
+            
         }
     });
     
-    function updateEmptyState() {
-        if($('ul li').length > 0){
-            // clear empty state
-            $('#emptyTasks').hide()
-        } else {
-            // add empty state
-            $('#emptyTasks').show()
-        }
-    }
 </script>
 </html>
